@@ -1,0 +1,171 @@
+---
+---
+
+<div class="lb" data-lightbox aria-hidden="true">
+  <button class="lb__btn lb__close" data-lb-close aria-label="Cerrar">&times;</button>
+  <button class="lb__btn lb__prev" data-lb-prev aria-label="Anterior">&lsaquo;</button>
+  <figure class="lb__figure">
+    <img class="lb__img" data-lb-img alt="" />
+    <figcaption class="lb__caption" data-lb-caption></figcaption>
+  </figure>
+  <button class="lb__btn lb__next" data-lb-next aria-label="Siguiente">&rsaquo;</button>
+</div>
+
+<style>
+  .lb {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.92);
+    padding: clamp(1rem, 4vw, 3rem);
+  }
+
+  .lb.open {
+    display: flex;
+  }
+
+  .lb__figure {
+    margin: 0;
+    max-width: 100%;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .lb__img {
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 4px;
+  }
+
+  .lb__caption {
+    color: #f3f4f6;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    text-align: center;
+    max-width: 60ch;
+    font-weight: 300;
+  }
+
+  .lb__btn {
+    position: absolute;
+    background: none;
+    border: none;
+    color: #f3f4f6;
+    cursor: pointer;
+    line-height: 1;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+  }
+
+  .lb__btn:hover {
+    opacity: 1;
+  }
+
+  .lb__close {
+    top: 1rem;
+    right: 1.25rem;
+    font-size: 2.5rem;
+  }
+
+  .lb__prev,
+  .lb__next {
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 3rem;
+    padding: 0 1rem;
+  }
+
+  .lb__prev {
+    left: 0.5rem;
+  }
+
+  .lb__next {
+    right: 0.5rem;
+  }
+</style>
+
+<script>
+  const lb = document.querySelector<HTMLElement>('[data-lightbox]');
+  const grid = document.querySelector<HTMLElement>('[data-grid]');
+  if (lb && grid) {
+    const img = lb.querySelector<HTMLImageElement>('[data-lb-img]')!;
+    const cap = lb.querySelector<HTMLElement>('[data-lb-caption]')!;
+    const cards = Array.from(grid.querySelectorAll<HTMLElement>('[data-card]'));
+    const canHover = window.matchMedia('(hover: hover)').matches;
+    let index = -1;
+
+    const show = (i: number) => {
+      const card = cards[i];
+      if (!card) return;
+      index = i;
+      img.src = card.dataset.full ?? '';
+      img.alt = card.dataset.alt ?? '';
+      cap.textContent = card.dataset.caption ?? '';
+      lb.classList.add('open');
+      lb.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    };
+
+    const close = () => {
+      lb.classList.remove('open');
+      lb.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      index = -1;
+    };
+
+    const step = (delta: number) => {
+      if (index < 0) return;
+      show((index + delta + cards.length) % cards.length);
+    };
+
+    cards.forEach((card, i) => {
+      card.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (canHover) {
+          show(i);
+          return;
+        }
+        // Táctil: primer toque revela, segundo abre.
+        if (card.classList.contains('is-active')) {
+          show(i);
+        } else {
+          cards.forEach((c) => c.classList.remove('is-active'));
+          card.classList.add('is-active');
+        }
+      });
+    });
+
+    // Tocar fuera de una foto oculta el pie revelado (táctil).
+    document.addEventListener('click', () => {
+      cards.forEach((c) => c.classList.remove('is-active'));
+    });
+
+    lb.querySelector('[data-lb-close]')!.addEventListener('click', close);
+    lb.querySelector('[data-lb-prev]')!.addEventListener('click', (e) => {
+      e.stopPropagation();
+      step(-1);
+    });
+    lb.querySelector('[data-lb-next]')!.addEventListener('click', (e) => {
+      e.stopPropagation();
+      step(1);
+    });
+    // Clic en el fondo (no en la figura) cierra.
+    lb.addEventListener('click', (e) => {
+      if (e.target === lb) close();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (!lb.classList.contains('open')) return;
+      if (e.key === 'Escape') close();
+      else if (e.key === 'ArrowLeft') step(-1);
+      else if (e.key === 'ArrowRight') step(1);
+    });
+  }
+</script>
