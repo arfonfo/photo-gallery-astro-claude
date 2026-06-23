@@ -1,9 +1,9 @@
 ---
+import type { CollectionEntry } from 'astro:content';
 import PhotoCard from './PhotoCard.astro';
-import type { ResolvedPhoto } from '../lib/images';
 
 interface Props {
-  photos: ResolvedPhoto[];
+  photos: CollectionEntry<'photos'>[];
 }
 
 const { photos } = Astro.props;
@@ -14,10 +14,17 @@ const { photos } = Astro.props;
     <p class="empty">Aún no hay fotos.</p>
   ) : (
     <div class="grid" data-grid>
-      {photos.map((photo, index) => (
-        <PhotoCard photo={photo} index={index} />
+      {photos.map((entry, index) => (
+        <PhotoCard
+          image={entry.data.image}
+          caption={entry.data.caption}
+          alt={entry.data.alt}
+          tags={entry.data.tags}
+          index={index}
+        />
       ))}
     </div>
+    <p class="empty is-hidden" data-empty-filter>Ninguna foto con esas etiquetas.</p>
   )
 }
 
@@ -27,3 +34,42 @@ const { photos } = Astro.props;
     column-gap: var(--gap);
   }
 </style>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-card]'));
+
+  if (reduce) {
+    cards.forEach((card) => card.classList.add('in'));
+  } else {
+    const observer = new IntersectionObserver(
+      (entries, obs) => {
+        const appearing = entries.filter((e) => e.isIntersecting);
+        appearing.forEach((entry, i) => {
+          const el = entry.target as HTMLElement;
+          // Escalonar las que entran juntas en este callback.
+          el.style.transitionDelay = `${i * 70}ms`;
+          el.classList.add('in');
+          obs.unobserve(el);
+        });
+      },
+      { threshold: 0.1 },
+    );
+
+    cards.forEach((card) => observer.observe(card));
+
+    document.addEventListener('gallery:filtered', () => {
+      // Resetear todas: las ocultas (display:none) no animan hasta que un
+      // filtro futuro las muestre y las re-observe.
+      cards.forEach((c) => {
+        c.classList.remove('in');
+        c.style.transitionDelay = '';
+      });
+      // Forzar reflow para que el reset surta efecto antes de re-observar.
+      void document.body.offsetHeight;
+      cards
+        .filter((c) => !c.classList.contains('is-hidden'))
+        .forEach((c) => observer.observe(c));
+    });
+  }
+</script>

@@ -97,14 +97,15 @@
   if (lb && grid) {
     const img = lb.querySelector<HTMLImageElement>('[data-lb-img]')!;
     const cap = lb.querySelector<HTMLElement>('[data-lb-caption]')!;
-    const cards = Array.from(grid.querySelectorAll<HTMLElement>('[data-card]'));
+    const allCards = Array.from(grid.querySelectorAll<HTMLElement>('[data-card]'));
     const canHover = window.matchMedia('(hover: hover)').matches;
-    let index = -1;
+    let current: HTMLElement | null = null;
 
-    const show = (i: number) => {
-      const card = cards[i];
-      if (!card) return;
-      index = i;
+    // Solo las fotos visibles según el filtro activo.
+    const visibleCards = () => allCards.filter((c) => !c.classList.contains('is-hidden'));
+
+    const open = (card: HTMLElement) => {
+      current = card;
       img.src = card.dataset.full ?? '';
       img.alt = card.dataset.alt ?? '';
       cap.textContent = card.dataset.caption ?? '';
@@ -117,26 +118,29 @@
       lb.classList.remove('open');
       lb.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
-      index = -1;
+      current = null;
     };
 
     const step = (delta: number) => {
-      if (index < 0) return;
-      show((index + delta + cards.length) % cards.length);
+      if (!current) return;
+      const vis = visibleCards();
+      const idx = vis.indexOf(current);
+      if (idx === -1) return;
+      open(vis[(idx + delta + vis.length) % vis.length]);
     };
 
-    cards.forEach((card, i) => {
+    allCards.forEach((card) => {
       card.addEventListener('click', (e) => {
         e.stopPropagation();
         if (canHover) {
-          show(i);
+          open(card);
           return;
         }
         // Táctil: primer toque revela, segundo abre.
         if (card.classList.contains('is-active')) {
-          show(i);
+          open(card);
         } else {
-          cards.forEach((c) => c.classList.remove('is-active'));
+          allCards.forEach((c) => c.classList.remove('is-active'));
           card.classList.add('is-active');
         }
       });
@@ -144,7 +148,7 @@
 
     // Tocar fuera de una foto oculta el pie revelado (táctil).
     document.addEventListener('click', () => {
-      cards.forEach((c) => c.classList.remove('is-active'));
+      allCards.forEach((c) => c.classList.remove('is-active'));
     });
 
     lb.querySelector('[data-lb-close]')!.addEventListener('click', close);
@@ -156,7 +160,6 @@
       e.stopPropagation();
       step(1);
     });
-    // Clic en el fondo (no en la figura) cierra.
     lb.addEventListener('click', (e) => {
       if (e.target === lb) close();
     });

@@ -2,7 +2,7 @@ import sharp from 'sharp';
 import { mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
-const dir = new URL('../src/images/', import.meta.url);
+const dir = new URL('../src/content/photos/', import.meta.url);
 mkdirSync(dir, { recursive: true });
 
 // [nombre, ancho, alto, color] — proporciones variadas para ver el masonry.
