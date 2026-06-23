@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import PhotoGrid from '../components/PhotoGrid.astro';
+import Lightbox from '../components/Lightbox.astro';
 import { resolvePhotos } from '../lib/images';
 
 const photos = resolvePhotos();
@@ -22,5 +23,6 @@ const photos = resolvePhotos();
         <PhotoGrid photos={photos} />
       </main>
     </div>
+    <Lightbox />
   </body>
 </html>
