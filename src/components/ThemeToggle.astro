@@ -1,0 +1,44 @@
+---
+---
+
+<button class="theme-toggle" data-theme-toggle type="button" aria-label="Cambiar tema">
+  <span class="theme-toggle__icon" aria-hidden="true"></span>
+</button>
+
+<style>
+  .theme-toggle {
+    background: none;
+    border: 1px solid var(--muted);
+    border-radius: 999px;
+    width: 2.25rem;
+    height: 2.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--fg);
+    opacity: 0.7;
+    transition: opacity 0.2s ease, border-color 0.2s ease;
+  }
+
+  .theme-toggle:hover {
+    opacity: 1;
+  }
+
+  .theme-toggle__icon::before {
+    content: '\263E'; /* luna (modo claro: ofrece pasar a oscuro) */
+    font-size: 1.1rem;
+  }
+
+  :global(:root.dark) .theme-toggle__icon::before {
+    content: '\2600'; /* sol (modo oscuro: ofrece pasar a claro) */
+  }
+</style>
+
+<script>
+  const btn = document.querySelector('[data-theme-toggle]');
+  btn?.addEventListener('click', () => {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  });
+</script>

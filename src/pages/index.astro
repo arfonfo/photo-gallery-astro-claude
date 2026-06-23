@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import PhotoGrid from '../components/PhotoGrid.astro';
 import Lightbox from '../components/Lightbox.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
 import { resolvePhotos } from '../lib/images';
 
 const photos = resolvePhotos();
@@ -12,12 +13,20 @@ const photos = resolvePhotos();
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      const stored = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (stored === 'dark' || (!stored && prefersDark)) {
+        document.documentElement.classList.add('dark');
+      }
+    </script>
     <title>Galería</title>
   </head>
   <body>
     <div class="page">
       <header class="page__header">
         <h1 class="page__title">Galería</h1>
+        <ThemeToggle />
       </header>
       <main>
         <PhotoGrid photos={photos} />
