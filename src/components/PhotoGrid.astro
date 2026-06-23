@@ -1,9 +1,9 @@
 ---
+import type { CollectionEntry } from 'astro:content';
 import PhotoCard from './PhotoCard.astro';
-import type { ResolvedPhoto } from '../lib/images';
 
 interface Props {
-  photos: ResolvedPhoto[];
+  photos: CollectionEntry<'photos'>[];
 }
 
 const { photos } = Astro.props;
@@ -14,8 +14,14 @@ const { photos } = Astro.props;
     <p class="empty">Aún no hay fotos.</p>
   ) : (
     <div class="grid" data-grid>
-      {photos.map((photo, index) => (
-        <PhotoCard photo={photo} index={index} />
+      {photos.map((entry, index) => (
+        <PhotoCard
+          image={entry.data.image}
+          caption={entry.data.caption}
+          alt={entry.data.alt}
+          tags={entry.data.tags}
+          index={index}
+        />
       ))}
     </div>
   )

@@ -1,35 +1,39 @@
 ---
 import { Image, getImage } from 'astro:assets';
-import type { ResolvedPhoto } from '../lib/images';
+import type { ImageMetadata } from 'astro';
 
 interface Props {
-  photo: ResolvedPhoto;
+  image: ImageMetadata;
+  caption: string;
+  alt: string;
+  tags: string[];
   index: number;
 }
 
-const { photo, index } = Astro.props;
+const { image, caption, alt, tags, index } = Astro.props;
 
 // Variante grande optimizada para el lightbox (su URL va en data-full).
-const full = await getImage({ src: photo.image, width: 2000, format: 'webp' });
+const full = await getImage({ src: image, width: 2000, format: 'webp' });
 ---
 
 <figure
   class="card"
   data-card
   data-index={index}
+  data-tags={tags.join(' ')}
   data-full={full.src}
-  data-caption={photo.caption}
-  data-alt={photo.alt}
+  data-caption={caption}
+  data-alt={alt}
 >
   <Image
-    src={photo.image}
-    alt={photo.alt}
+    src={image}
+    alt={alt}
     widths={[320, 480, 640]}
     sizes="(max-width: 600px) 100vw, (max-width: 1000px) 50vw, 320px"
     loading="lazy"
     class="card__img"
   />
-  <figcaption class="card__caption">{photo.caption}</figcaption>
+  <figcaption class="card__caption">{caption}</figcaption>
 </figure>
 
 <style>
@@ -67,7 +71,6 @@ const full = await getImage({ src: photo.image, width: 2000, format: 'webp' });
     pointer-events: none;
   }
 
-  /* Hover en desktop; .is-active lo activa por tap en táctil (Task 5). */
   @media (hover: hover) {
     .card:hover .card__caption {
       opacity: 1;

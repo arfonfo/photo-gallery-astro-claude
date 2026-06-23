@@ -1,11 +1,11 @@
 ---
 import '../styles/global.css';
+import { getCollection } from 'astro:content';
 import PhotoGrid from '../components/PhotoGrid.astro';
 import Lightbox from '../components/Lightbox.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
-import { resolvePhotos } from '../lib/images';
 
-const photos = resolvePhotos();
+const photos = await getCollection('photos');
 ---
 
 <!doctype html>
