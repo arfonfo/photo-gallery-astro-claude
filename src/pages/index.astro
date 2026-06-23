@@ -1,11 +1,14 @@
 ---
 import '../styles/global.css';
 import { getCollection } from 'astro:content';
+import FilterBar from '../components/FilterBar.astro';
 import PhotoGrid from '../components/PhotoGrid.astro';
 import Lightbox from '../components/Lightbox.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
+import { uniqueTags } from '../lib/filter';
 
 const photos = await getCollection('photos');
+const tags = uniqueTags(photos.map((p) => p.data.tags));
 ---
 
 <!doctype html>
@@ -29,6 +32,7 @@ const photos = await getCollection('photos');
         <ThemeToggle />
       </header>
       <main>
+        <FilterBar tags={tags} />
         <PhotoGrid photos={photos} />
       </main>
     </div>

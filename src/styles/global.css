@@ -63,3 +63,39 @@ body {
   padding: 4rem 0;
   text-align: center;
 }
+
+.is-hidden {
+  display: none;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.filter {
+  background: none;
+  border: 1px solid var(--muted);
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 300;
+  color: var(--fg);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease, background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.filter:hover {
+  opacity: 1;
+}
+
+.filter.is-active {
+  opacity: 1;
+  background: var(--fg);
+  border-color: var(--fg);
+  color: var(--bg);
+}
