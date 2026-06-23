@@ -1,5 +1,9 @@
 ---
 import '../styles/global.css';
+import PhotoGrid from '../components/PhotoGrid.astro';
+import { resolvePhotos } from '../lib/images';
+
+const photos = resolvePhotos();
 ---
 
 <!doctype html>
@@ -15,7 +19,7 @@ import '../styles/global.css';
         <h1 class="page__title">Galería</h1>
       </header>
       <main>
-        <p class="empty">Aún no hay fotos.</p>
+        <PhotoGrid photos={photos} />
       </main>
     </div>
   </body>

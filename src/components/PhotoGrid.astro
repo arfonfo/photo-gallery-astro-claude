@@ -1,0 +1,29 @@
+---
+import PhotoCard from './PhotoCard.astro';
+import type { ResolvedPhoto } from '../lib/images';
+
+interface Props {
+  photos: ResolvedPhoto[];
+}
+
+const { photos } = Astro.props;
+---
+
+{
+  photos.length === 0 ? (
+    <p class="empty">Aún no hay fotos.</p>
+  ) : (
+    <div class="grid" data-grid>
+      {photos.map((photo, index) => (
+        <PhotoCard photo={photo} index={index} />
+      ))}
+    </div>
+  )
+}
+
+<style>
+  .grid {
+    column-width: 320px;
+    column-gap: var(--gap);
+  }
+</style>
