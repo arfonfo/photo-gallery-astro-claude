@@ -16,6 +16,7 @@ const { image, caption, alt, tags, index } = Astro.props;
 const full = await getImage({ src: image, width: 2000, format: 'webp' });
 ---
 
+<!-- data-tags: etiquetas separadas por espacio, consumidas por FilterBar -->
 <figure
   class="card"
   data-card

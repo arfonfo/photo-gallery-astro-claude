@@ -35,7 +35,7 @@ const { tags } = Astro.props;
       const activeTags = [...active];
 
       cards.forEach((card) => {
-        const cardTags = (card.dataset.tags ?? '').split(' ').filter(Boolean);
+        const cardTags = (card.dataset.tags ?? '').split(' ').filter(Boolean); // tags van separados por espacio, según PhotoCard
         card.classList.toggle('is-hidden', !photoMatches(cardTags, activeTags));
       });
 
