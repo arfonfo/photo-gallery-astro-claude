@@ -34,3 +34,40 @@ const { photos } = Astro.props;
     column-gap: var(--gap);
   }
 </style>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-card]'));
+
+  if (reduce) {
+    cards.forEach((card) => card.classList.add('in'));
+  } else {
+    const observer = new IntersectionObserver(
+      (entries, obs) => {
+        const appearing = entries.filter((e) => e.isIntersecting);
+        appearing.forEach((entry, i) => {
+          const el = entry.target as HTMLElement;
+          // Escalonar las que entran juntas en este callback.
+          el.style.transitionDelay = `${i * 70}ms`;
+          el.classList.add('in');
+          obs.unobserve(el);
+        });
+      },
+      { threshold: 0.1 },
+    );
+
+    cards.forEach((card) => observer.observe(card));
+
+    // Re-animar al filtrar: resetear las visibles y volver a observarlas.
+    document.addEventListener('gallery:filtered', () => {
+      const visible = cards.filter((c) => !c.classList.contains('is-hidden'));
+      visible.forEach((c) => {
+        c.classList.remove('in');
+        c.style.transitionDelay = '';
+      });
+      // Forzar reflow para que el reset surta efecto antes de re-observar.
+      void document.body.offsetHeight;
+      visible.forEach((c) => observer.observe(c));
+    });
+  }
+</script>
