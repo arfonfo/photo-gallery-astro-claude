@@ -8,7 +8,7 @@ import ThemeToggle from '../components/ThemeToggle.astro';
 import { uniqueTags } from '../lib/filter';
 
 const photos = await getCollection('photos');
-const tags = uniqueTags(photos.map((p) => p.data.tags));
+const subtags = uniqueTags(photos.map((p) => p.data.tags));
 ---
 
 <!doctype html>
@@ -33,10 +33,13 @@ const tags = uniqueTags(photos.map((p) => p.data.tags));
         <ThemeToggle />
       </header>
       <main>
-        <FilterBar tags={tags} />
+        <FilterBar subtags={subtags} />
         <PhotoGrid photos={photos} />
       </main>
     </div>
     <Lightbox />
+    <script>
+      import '../scripts/gallery-filter';
+    </script>
   </body>
 </html>
