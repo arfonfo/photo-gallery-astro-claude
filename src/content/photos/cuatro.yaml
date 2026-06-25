@@ -1,4 +1,5 @@
 image: ./cuatro.jpg
 caption: No recuerdo el sitio, pero sí cómo me sentí.
 alt: Muestra cuatro
-tags: [retrato]
+category: [casa]
+tags: [interior, ventana]

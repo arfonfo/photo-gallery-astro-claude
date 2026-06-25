@@ -1,4 +1,5 @@
 image: ./dos.jpg
-caption: Una calle que no llevaba a ninguna parte, y daba igual.
+caption: Una calle que no llevaba a ninguna parte, y dada igual.
 alt: Muestra dos
-tags: [calle]
+category: [ciudad]
+tags: [calle, noche]
