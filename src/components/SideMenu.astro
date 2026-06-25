@@ -1,0 +1,60 @@
+---
+interface Props {
+  categories: string[];
+}
+
+const { categories } = Astro.props;
+---
+
+<div class="menu" data-menu>
+  <button
+    class="menu__toggle"
+    data-menu-toggle
+    type="button"
+    aria-label="Abrir menú de categorías"
+  >
+    <span class="menu__bar"></span>
+    <span class="menu__bar"></span>
+    <span class="menu__bar"></span>
+  </button>
+  <nav class="menu__panel" data-menu-panel aria-label="Categorías">
+    <button class="menu__item is-active" data-category="" type="button" aria-pressed="true">
+      Todas
+    </button>
+    {categories.map((cat) => (
+      <button class="menu__item" data-category={cat} type="button" aria-pressed="false">
+        {cat}
+      </button>
+    ))}
+  </nav>
+</div>
+
+<script>
+  import { setCategory } from '../scripts/gallery-filter';
+
+  const menu = document.querySelector<HTMLElement>('[data-menu]');
+  const toggle = menu?.querySelector<HTMLElement>('[data-menu-toggle]');
+  const panel = menu?.querySelector<HTMLElement>('[data-menu-panel]');
+  const canHover = window.matchMedia('(hover: hover)').matches;
+
+  if (menu && toggle && panel) {
+    // Clic en una categoría: fija el filtro (el módulo resetea/repobla la barra).
+    panel.addEventListener('click', (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLElement>('[data-category]');
+      if (!btn) return;
+      setCategory(btn.dataset.category ?? '');
+      if (!canHover) menu.classList.remove('is-open');
+    });
+
+    // En táctil (sin hover) el icono abre/cierra; tocar fuera cierra.
+    if (!canHover) {
+      toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        menu.classList.toggle('is-open');
+      });
+      document.addEventListener('click', (e) => {
+        if (!menu.contains(e.target as Node)) menu.classList.remove('is-open');
+      });
+    }
+  }
+</script>

@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import { getCollection } from 'astro:content';
+import SideMenu from '../components/SideMenu.astro';
 import FilterBar from '../components/FilterBar.astro';
 import PhotoGrid from '../components/PhotoGrid.astro';
 import Lightbox from '../components/Lightbox.astro';
@@ -9,6 +10,7 @@ import { uniqueTags } from '../lib/filter';
 
 const photos = await getCollection('photos');
 const subtags = uniqueTags(photos.map((p) => p.data.tags));
+const categories = ['mar', 'montaña', 'casa', 'ciudad', 'naturaleza'];
 ---
 
 <!doctype html>
@@ -27,6 +29,7 @@ const subtags = uniqueTags(photos.map((p) => p.data.tags));
     <noscript><style>.card { opacity: 1 !important; transform: none !important; }</style></noscript>
   </head>
   <body>
+    <SideMenu categories={categories} />
     <div class="page">
       <header class="page__header">
         <h1 class="page__title">Galería</h1>

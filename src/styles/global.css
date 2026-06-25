@@ -118,3 +118,111 @@ body {
     transition: none;
   }
 }
+
+.menu__toggle {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 40;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  background: var(--bg);
+  border: 1px solid var(--muted);
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.menu__bar {
+  width: 1.1rem;
+  height: 2px;
+  background: var(--fg);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.menu__panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 220px;
+  z-index: 35;
+  background: var(--bg);
+  border-right: 1px solid var(--muted);
+  padding: 4.5rem 1rem 1rem;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* Abierto: hover sobre icono o panel (desktop) o clase .is-open (táctil). */
+.menu:hover .menu__panel,
+.menu.is-open .menu__panel {
+  transform: translateX(0);
+}
+
+/* Hamburguesa → X */
+.menu:hover .menu__bar:nth-child(1),
+.menu.is-open .menu__bar:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.menu:hover .menu__bar:nth-child(2),
+.menu.is-open .menu__bar:nth-child(2) {
+  opacity: 0;
+}
+
+.menu:hover .menu__bar:nth-child(3),
+.menu.is-open .menu__bar:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.menu__item {
+  background: none;
+  border: none;
+  text-align: left;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 300;
+  color: var(--fg);
+  padding: 0.4rem 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  opacity: 0.7;
+  text-transform: capitalize;
+  transition: opacity 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.menu__item:hover {
+  opacity: 1;
+}
+
+.menu__item.is-active {
+  opacity: 1;
+  background: var(--fg);
+  color: var(--bg);
+}
+
+/* Subetiquetas también capitalizadas, para que casen con las categorías. */
+.filter {
+  text-transform: capitalize;
+}
+
+/* Hueco para el icono fijo, que no choque con el título. */
+.page__header {
+  padding-left: 3rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu__panel,
+  .menu__bar {
+    transition: none;
+  }
+}
