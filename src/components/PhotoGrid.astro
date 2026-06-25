@@ -19,12 +19,13 @@ const { photos } = Astro.props;
           image={entry.data.image}
           caption={entry.data.caption}
           alt={entry.data.alt}
+          categories={entry.data.category}
           tags={entry.data.tags}
           index={index}
         />
       ))}
     </div>
-    <p class="empty is-hidden" data-empty-filter>Ninguna foto con esas etiquetas.</p>
+    <p class="empty is-hidden" data-empty-filter>Ninguna foto en esta selección.</p>
   )
 }
 

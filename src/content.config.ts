@@ -13,6 +13,7 @@ const photos = defineCollection({
       image: image(),
       caption: z.string(),
       alt: z.string().min(1),
+      category: z.array(z.string()).default([]),
       tags: z.array(z.string()).default([]),
     }),
 });

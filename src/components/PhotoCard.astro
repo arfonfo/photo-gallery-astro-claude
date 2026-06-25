@@ -6,11 +6,12 @@ interface Props {
   image: ImageMetadata;
   caption: string;
   alt: string;
+  categories: string[];
   tags: string[];
   index: number;
 }
 
-const { image, caption, alt, tags, index } = Astro.props;
+const { image, caption, alt, categories, tags, index } = Astro.props;
 
 // Variante grande optimizada para el lightbox (su URL va en data-full).
 const full = await getImage({ src: image, width: 2000, format: 'webp' });
@@ -21,6 +22,7 @@ const full = await getImage({ src: image, width: 2000, format: 'webp' });
   class="card"
   data-card
   data-index={index}
+  data-categories={categories.join(' ')}
   data-tags={tags.join(' ')}
   data-full={full.src}
   data-caption={caption}

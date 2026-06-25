@@ -1,69 +1,16 @@
 ---
 interface Props {
-  tags: string[];
+  subtags: string[];
 }
 
-const { tags } = Astro.props;
+const { subtags } = Astro.props;
 ---
 
-{
-  tags.length > 0 && (
-    <div class="filters" data-filters role="group" aria-label="Filtrar por etiqueta">
-      <button class="filter is-active" data-tag="" type="button" aria-pressed="true">
-        Todas
-      </button>
-      {tags.map((tag) => (
-        <button class="filter" data-tag={tag} type="button" aria-pressed="false">
-          {tag}
-        </button>
-      ))}
-    </div>
-  )
-}
-
-<script>
-  import { photoMatches } from '../lib/filter';
-
-  const bar = document.querySelector<HTMLElement>('[data-filters]');
-  if (bar) {
-    const buttons = Array.from(bar.querySelectorAll<HTMLButtonElement>('.filter'));
-    const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-card]'));
-    const emptyMsg = document.querySelector<HTMLElement>('[data-empty-filter]');
-    const active = new Set<string>();
-
-    const apply = () => {
-      const activeTags = [...active];
-
-      cards.forEach((card) => {
-        const cardTags = (card.dataset.tags ?? '').split(' ').filter(Boolean); // tags van separados por espacio, según PhotoCard
-        card.classList.toggle('is-hidden', !photoMatches(cardTags, activeTags));
-      });
-
-      buttons.forEach((btn) => {
-        const tag = btn.dataset.tag ?? '';
-        const on = tag === '' ? active.size === 0 : active.has(tag);
-        btn.classList.toggle('is-active', on);
-        btn.setAttribute('aria-pressed', String(on));
-      });
-
-      const anyVisible = cards.some((c) => !c.classList.contains('is-hidden'));
-      emptyMsg?.classList.toggle('is-hidden', anyVisible);
-
-      document.dispatchEvent(new CustomEvent('gallery:filtered'));
-    };
-
-    buttons.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const tag = btn.dataset.tag ?? '';
-        if (tag === '') {
-          active.clear();
-        } else if (active.has(tag)) {
-          active.delete(tag);
-        } else {
-          active.add(tag);
-        }
-        apply();
-      });
-    });
-  }
-</script>
+{/* Barra de subetiquetas. Los botones se reconstruyen en cliente al cambiar
+   de categoría (ver src/scripts/gallery-filter.ts). Render inicial = "Todas". */}
+<div class="filters" data-filters role="group" aria-label="Filtrar por subetiqueta">
+  <button class="filter is-active" data-tag="" type="button" aria-pressed="true">Todas</button>
+  {subtags.map((tag) => (
+    <button class="filter" data-tag={tag} type="button" aria-pressed="false">{tag}</button>
+  ))}
+</div>
