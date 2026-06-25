@@ -10,6 +10,8 @@ let activeCategory = '';
 const activeSubtags = new Set<string>();
 let cards: Card[] = [];
 let bar: HTMLElement | null = null;
+let titleEl: HTMLElement | null = null;
+let titleBase = '';
 let initialized = false;
 
 function applyVisibility() {
@@ -24,6 +26,16 @@ function applyVisibility() {
 
 function notifyFiltered() {
   document.dispatchEvent(new CustomEvent('gallery:filtered'));
+}
+
+function capitalize(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+// El título refleja la categoría activa: "Galería" (Todas) o "Galería Mar".
+function updateTitle() {
+  if (!titleEl) return;
+  titleEl.textContent = activeCategory ? `${titleBase} ${capitalize(activeCategory)}` : titleBase;
 }
 
 function highlightCategory() {
@@ -72,6 +84,7 @@ export function setCategory(category: string) {
   activeSubtags.clear();
   renderBar();
   highlightCategory();
+  updateTitle();
   applyVisibility();
   notifyFiltered();
 }
@@ -94,6 +107,8 @@ function init() {
     tags: (el.dataset.tags ?? '').split(' ').filter(Boolean),
   }));
   bar = document.querySelector<HTMLElement>('[data-filters]');
+  titleEl = document.querySelector<HTMLElement>('.page__title');
+  titleBase = titleEl?.textContent?.trim() ?? 'Galería';
   // Delegación: un solo listener sobrevive a los re-render de los botones.
   bar?.addEventListener('click', (e) => {
     const btn = (e.target as HTMLElement).closest<HTMLElement>('.filter');
