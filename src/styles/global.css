@@ -43,7 +43,7 @@ body {
   max-width: var(--maxw);
   margin: 0 auto;
   padding: var(--page-pad-top) clamp(1rem, 3vw, 3rem);
-  transition: transform 0.3s ease;
+  transition: padding-left 0.3s ease;
 }
 
 .page__header {
@@ -165,42 +165,32 @@ body {
   gap: 0.25rem;
 }
 
-/* Abierto: hover sobre icono o panel (desktop) o clase .is-open (táctil). */
-.menu:hover .menu__panel,
+/* Abierto: clase .is-open (la gestiona el JS: hover en desktop, tap en táctil). */
 .menu.is-open .menu__panel {
   transform: translateX(0);
 }
 
-/* Al abrir, empuja el contenido hacia la derecha (drawer). */
-.menu:hover ~ .page,
+/* Al abrir, reduce el ancho del contenido (se adapta) y deja sitio al panel.
+   Con box-sizing: border-box el padding estrecha el contenido y el masonry
+   y la barra de subetiquetas se recolocan en el ancho restante. */
 .menu.is-open ~ .page {
-  transform: translateX(var(--menu-w));
+  padding-left: calc(clamp(1rem, 3vw, 3rem) + var(--menu-w));
 }
 
 /* Al abrir, alinea el título con la barra de subetiquetas (quita el hueco del icono). */
-.menu:hover ~ .page .page__header,
 .menu.is-open ~ .page .page__header {
   padding-left: 0;
 }
 
-/* Al abrir, mantén el toggle de tema en pantalla (contrarresta el push). */
-.menu:hover ~ .page .theme-toggle,
-.menu.is-open ~ .page .theme-toggle {
-  transform: translateX(calc(-1 * var(--menu-w)));
-}
-
 /* Hamburguesa → X */
-.menu:hover .menu__bar:nth-child(1),
 .menu.is-open .menu__bar:nth-child(1) {
   transform: translateY(7px) rotate(45deg);
 }
 
-.menu:hover .menu__bar:nth-child(2),
 .menu.is-open .menu__bar:nth-child(2) {
   opacity: 0;
 }
 
-.menu:hover .menu__bar:nth-child(3),
 .menu.is-open .menu__bar:nth-child(3) {
   transform: translateY(-7px) rotate(-45deg);
 }
@@ -246,8 +236,7 @@ body {
   .menu__panel,
   .menu__bar,
   .page,
-  .page__header,
-  .theme-toggle {
+  .page__header {
     transition: none;
   }
 }
