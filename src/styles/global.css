@@ -6,6 +6,8 @@
   --overlay-fg: #ffffff;
   --gap: 1rem;
   --maxw: 1400px;
+  --menu-w: 220px;
+  --page-pad-top: clamp(1.5rem, 4vw, 4rem);
   --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
@@ -33,13 +35,15 @@ body {
   font-family: var(--font);
   font-weight: 300;
   -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
   transition: background 0.3s ease, color 0.3s ease;
 }
 
 .page {
   max-width: var(--maxw);
   margin: 0 auto;
-  padding: clamp(1.5rem, 4vw, 4rem) clamp(1rem, 3vw, 3rem);
+  padding: var(--page-pad-top) clamp(1rem, 3vw, 3rem);
+  transition: padding-left 0.3s ease;
 }
 
 .page__header {
@@ -121,7 +125,7 @@ body {
 
 .menu__toggle {
   position: fixed;
-  top: 1rem;
+  top: calc(var(--page-pad-top) - 0.65rem);
   left: 1rem;
   z-index: 40;
   width: 2.5rem;
@@ -131,9 +135,8 @@ body {
   align-items: center;
   justify-content: center;
   gap: 5px;
-  background: var(--bg);
-  border: 1px solid var(--muted);
-  border-radius: 8px;
+  background: transparent;
+  border: none;
   cursor: pointer;
   padding: 0;
 }
@@ -150,11 +153,11 @@ body {
   top: 0;
   left: 0;
   height: 100vh;
-  width: 220px;
+  width: var(--menu-w);
   z-index: 35;
   background: var(--bg);
   border-right: 1px solid var(--muted);
-  padding: 4.5rem 1rem 1rem;
+  padding: calc(var(--page-pad-top) + 2.5rem) 1rem 1rem;
   transform: translateX(-100%);
   transition: transform 0.3s ease;
   display: flex;
@@ -162,24 +165,32 @@ body {
   gap: 0.25rem;
 }
 
-/* Abierto: hover sobre icono o panel (desktop) o clase .is-open (táctil). */
-.menu:hover .menu__panel,
+/* Abierto: clase .is-open (la gestiona el JS: hover en desktop, tap en táctil). */
 .menu.is-open .menu__panel {
   transform: translateX(0);
 }
 
+/* Al abrir, reduce el ancho del contenido (se adapta) y deja sitio al panel.
+   Con box-sizing: border-box el padding estrecha el contenido y el masonry
+   y la barra de subetiquetas se recolocan en el ancho restante. */
+.menu.is-open ~ .page {
+  padding-left: calc(clamp(1rem, 3vw, 3rem) + var(--menu-w));
+}
+
+/* Al abrir, alinea el título con la barra de subetiquetas (quita el hueco del icono). */
+.menu.is-open ~ .page .page__header {
+  padding-left: 0;
+}
+
 /* Hamburguesa → X */
-.menu:hover .menu__bar:nth-child(1),
 .menu.is-open .menu__bar:nth-child(1) {
   transform: translateY(7px) rotate(45deg);
 }
 
-.menu:hover .menu__bar:nth-child(2),
 .menu.is-open .menu__bar:nth-child(2) {
   opacity: 0;
 }
 
-.menu:hover .menu__bar:nth-child(3),
 .menu.is-open .menu__bar:nth-child(3) {
   transform: translateY(-7px) rotate(-45deg);
 }
@@ -218,11 +229,14 @@ body {
 /* Hueco para el icono fijo, que no choque con el título. */
 .page__header {
   padding-left: 3rem;
+  transition: padding-left 0.3s ease;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .menu__panel,
-  .menu__bar {
+  .menu__bar,
+  .page,
+  .page__header {
     transition: none;
   }
 }
